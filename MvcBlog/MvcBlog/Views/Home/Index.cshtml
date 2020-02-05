@@ -1,0 +1,67 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model IPagedList<MvcBlog.Models.Makale>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="col-md-13">
+    @{
+        foreach (var item in Model)
+        {
+            <h1 class="my-4">
+                @item.Baslik
+            </h1>
+            <!-- Blog Post -->
+            <div class="card mb-4">
+
+                <img class="card-img-top" src="@item.Foto" alt="@item.Baslik">
+                <div class="card-body">
+                    <h2 class="card-title">@item.Baslik</h2>
+                    <p class="card-text">
+
+                    @if (item.Icerik.Length > 150)
+                    {
+                        <p class="card-text">
+                            @Html.Raw(item.Icerik.Substring(0, 150)) ...
+                        </p>
+                    }
+                    else
+                    {
+                        <p>@Html.Raw(item.Icerik)</p>
+                    }
+                    @*</p>*@
+                    <a href="/Home/MakaleDetay/@item.MakaleId" class="btn btn-primary">Devamını Oku &rarr;</a>
+                </div>
+                <div class="card-footer text-muted">
+                    @string.Format("{0: dd MMMM yyyy}", item.Tarih)
+                    @*@item.Tarih*@
+
+                    <a href="/Uye/UyeProfil/@item.Uye.UyeId">@item.Uye.KullaniciAdi</a>
+                    <span title="Etiketler">@item.Etikets.Count()</span>
+                </div>
+            </div>
+        }
+    }
+
+
+    <div class="pagination justify-content-center mb-4">
+        <div class="page-item pagination-lg">
+            <div class="page-link">
+                @Html.PagedListPager(Model, _sayfaNo => Url.Action("Index", "Home", new { Page = _sayfaNo }), PagedListRenderOptions.MinimalWithPageCountText)
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <br />
+    <br />
+    <br />
+</div>
+
+

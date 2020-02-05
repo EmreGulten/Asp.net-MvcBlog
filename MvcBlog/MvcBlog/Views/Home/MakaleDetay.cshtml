@@ -1,0 +1,160 @@
+﻿@model MvcBlog.Models.Makale
+@using Microsoft.Web.Helpers;
+
+@{
+    ViewBag.Title = "MakaleDetay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .tag {
+        background-color: blue;
+    }
+</style>
+
+<div class="col-md-13">
+    <!-- Title -->
+    <h1 class="mt-4">@Model.Baslik</h1>
+
+    <!-- Author -->
+    <p class="lead">
+
+        <a href="/Uye/UyeProfil/@Model.Uye.UyeId">@Model.Uye.KullaniciAdi</a>
+    </p>
+
+    <hr>
+
+    <!-- Date/Time -->
+    <p>
+        @string.Format("{0: dd MMMM yyyy}", Model.Tarih) |
+        <span>@Model.Kategori.KategoriAd (@Model.Kategori.Makales.Count())</span>
+    </p>
+
+    <hr>
+    <div class="card mb-4">
+        <!-- Preview Image -->
+        <img class="img-fluid rounded" src="@Model.Foto" alt="">
+    </div>
+    <hr>
+
+    <!-- Post Content -->
+    <p class="lead">
+        @Html.Raw(Model.Icerik)
+    </p>
+
+    <div>
+        @{
+            foreach (var etiket in Model.Etikets)
+            {
+                <span class="tag">@etiket.EtiketAdi</span>
+            }
+        }
+    </div>
+    <hr />
+
+
+
+    @{
+        foreach (var yorum in Model.Yorums.ToList())
+        {
+            <div class="card mb-2">
+                <div class="media mb-3">
+                    <img class="d-flex mr-3 rounded-circle" width="75" src="@yorum.Uye.Foto" alt="@yorum.Uye.AdSoyad">
+                    <div class="media-body">
+                        <h5 class="mt-0">@yorum.Uye.KullaniciAdi</h5>
+                        @yorum.Icerik
+                        @{
+                            if (Convert.ToInt32(Session["uyeid"]) == yorum.UyeId)
+                            {
+                                <a class="btn btn-danger" href="/Home/YorumSil/@yorum.UyeId">Sil</a>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+
+
+
+
+    @{
+        if (Session["uyeid"] != null)
+        {
+            <div class="card my-4">
+                <h5 class="card-header">Yorum Yap:</h5>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <textarea id="yorum" typeof="text" class="form-control" rows="3"></textarea>
+                        </div>
+                        <button type="submit" id="gonder" class="btn btn-primary">Gönder</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <h2>Yorum Yapmak için giriş yapınız.</h2>
+            <p class="btn btn-primary"><a  style="color: white" href="/Uye/Login">Giriş Yap</a></p>
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+    <br />
+    <br />
+    <br />
+    <br />
+</div>
+
+<script src="~/Content/Kaynak/startbootstrap-blog-home-gh-pages/vendor/jquery/jquery.min.js"></script>
+<script src="~/Content/Kaynak/startbootstrap-blog-post-gh-pages/vendor/jquery/jquery.js"></script>
+<script src="~/Content/Kaynak/startbootstrap-blog-home-gh-pages/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="~/Content/Kaynak/startbootstrap-blog-home-gh-pages/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<script src="~/Content/Kaynak/startbootstrap-blog-home-gh-pages/vendor/jquery/jquery.js"></script>
+<script src="~/Content/Kaynak/startbootstrap-blog-home-gh-pages/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+
+@*<script type="text/javascript">
+        $(document).ready(function() {
+            $("#gonder").click(function() {
+                alert("evet");
+            });
+        });
+    </script>*@
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#gonder").click(function () {
+            var yorumunuz = $("#yorum").val();
+            $.ajax({
+                url: '/Home/Yorum/',
+                data: { yorum: yorumunuz, Makaleid:@Model.MakaleId},
+                type: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    alert("Başarılı "+ yorumunuz);}
+            });
+        });
+    })
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $.ajax({
+            url: '/Home/YorumSayisi',
+            data: { Makaleid:@Model.MakaleId},
+            type:'POST'
+        });
+    })
+</script>

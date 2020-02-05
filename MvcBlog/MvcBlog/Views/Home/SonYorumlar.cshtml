@@ -1,0 +1,17 @@
+﻿@model IEnumerable<MvcBlog.Models.Yorum>
+
+@{
+    Layout = null;
+}
+
+<h4 class="card-header">Son Yorumlar</h4>
+<div class="col-lg-12">
+    <ul class="card-body">
+        @{
+            foreach (var yorum in Model)
+            {
+        <li>@yorum.Icerik  (@string.Format("{0: dd MMMM yyyy}", yorum.Tarih))</li>
+            }
+        }
+    </ul>
+</div>
